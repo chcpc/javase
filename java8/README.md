@@ -11,6 +11,7 @@ Java 8是oracle公司于2014年3月发布，可以看成是自Java5以来最具�
 
 ## 2、并行流与串行流
 
+
 并行流就是把一个内容分成多个数据块，并用不同的线程分别处理每个数据块的流。相比较串行的流，**并行的流可以很大程度上提高程序的执行效率**。
 Java8中将并行进行了优化，我们可以很容易的对数据进行并行操作。
 Stream API 可以声明性地通过parallel()与sequential()在并行流与顺序流之间进行切换。
@@ -22,15 +23,15 @@ Lambda是一个**匿名函数**，我们可以把Lambda表达式理解为是一�
 1. 举例：(o1, o2) -> Integer.compare(o1, o2);
 2. 格式：
 
-- -> ：lambda操作符 或箭头操作符
-- ->左侧：lambda形参列表（其实就是接口中的抽象方法的形参列表）
-- ->右侧：lambda体（其实就是重写的抽象方法体）
+*      -> ：lambda操作符 或箭头操作符
+*      ->左侧：lambda形参列表（其实就是接口中的抽象方法的形参列表）
+*      ->右侧：lambda体（其实就是重写的抽象方法体）
 
 3. Lambda表达式的使用：（分六种情况）
 
-- 总结：
-- ->左侧：lambda形参列表的参数类型可以省略（类型腿短）；如果lambda形参列表只有一个参数，其一对()也可以省略。
-- ->右侧：lambda体应该使用一对{}包裹；如果Lambda体只有一条执行语句（可能是return语句），可以省略这一对{}和return
+*  总结：
+*  ->左侧：lambda形参列表的参数类型可以省略（类型腿短）；如果lambda形参列表只有一个参数，其一对()也可以省略。
+*  ->右侧：lambda体应该使用一对{}包裹；如果Lambda体只有一条执行语句（可能是return语句），可以省略这一对{}和return
 
 4. Lambda表达式的本质：作为函数式接口的实例
 
@@ -94,8 +95,124 @@ Lambda是一个**匿名函数**，我们可以把Lambda表达式理解为是一�
   - 和方法引用类似，函数式接口的抽象方法的形参列表和构造器的形参列表一致
   - 抽象方法的返回值类型即为构造器所属的类
 - 数组引用
-  - 可以把数组看做是一个特殊的类，则写法与构造器一致
+  *  可以把数组看做是一个特殊的类，则写法与构造器一致
 
 ## 四、强大的StreamAPI
+
+### 介绍
+
+- Java8中有两大最为重要的改变。第一个是Lambda表达式；另一个则是Stream API。
+- Stream API(java.util.stream)把真正的函数式编程风格引入到Java中。这是目前为止对Java类库的最好补充，因为Stream API可以极大的提供Java程序员的生产力，让程序员写出高效、干净、简洁的代码。
+- Stream是Java8中处理集合的关键抽象概念，它可以指定你希望对集合进行的操作，可以执行非常复杂的查找、过滤和映射数据库等操作。使用Stream API对集合数据进行操作，就类似于使用SQL进行数据库的查询。也可以使用Stream API来并行执行操作。简而言之，Stream API提供了一种高效且易于使用的处理数据的方式。
+
+### 为什么要用
+
+- 实际开发中，项目中多数数据源都来自于Mysql，Oracle等。单现在数据源可以更多了，有MonDB，Redis等，而这些NoSQL的数据就需要Java层面去处理
+- Stream和Collection集合的区别：Collection是一种静态的内存数据结构，而Stream是有关计算的。前者是主要面向内存，存储在内存中，后者主要是面向CPU，通过CPU实现计算。
+
+### 什么是Stream
+
+是数据渠道，用于操作数据源(集合、数组等)所生成的元素序列。
+
+> 集合讲的是数据，Stream讲的是计算
+
+**注意**：
+
+1. Stream自己不会存储元素
+2. Stream不会改变源对象。相反，他们会返回一个持有结果的新Stream。
+3. Stream操作时延迟执行的。这意味着他们会等到需要结果的时候才执行。
+
+### Stream流程
+
+#### 1.创建Stream
+
+一个数据源(如：集合、数组)，获取一个流
+
+#### 2中间操作
+
+一个中间操作链，对数据源的数据进行处理
+
+#### 3.终止操作（终端操作）
+
+一旦执行终止操作，就执行中间操作链，并产生结果。之后，不会再被使用
+
+```mermaid
+graph LR
+   A(数据源) --> filter
+   subgraph 中间操作
+   filter --> map
+   map --> ......
+   end
+   ...... --> Z(终止操作)
+```
+
+### 创建Stream
+
+#### 方式一：通过集合
+
+Java8中的Collection接口被扩展，提供了两个获取流的方法：
+
+- default Stream\<E\> stream()：返回一个顺序流
+- default Stream\<E\> parallelStream()：返回一个并行流
+
+#### 方式二：通过数组
+
+Java8中的Arrays的静态方法stream()可以获取数据流：
+
+- static \<T\> Stream\<T\> stream(T[] array)：返回一个流
+
+通过重载，能够处理基本类型的数组：
+
+- public static IntStream stream(int[] array)
+- public static LongStream stream(long[] array)
+- public static DoubleStream stream(double[] array)
+
+#### 方法三：通过Stream的of()
+
+可以调用Stream类的静态方法of()，通过显示值创建一个流。它可以接受任意数量的参数。
+
+- public static\<T\> Stream\<T\> of(T... values)：返回一个流
+
+#### 方法四：创建无线流
+
+可以使用静态方法Stream.iterate()和Stream.generate()，创建无限流
+
+- public static\<T\> Stream\<T\> iterate(final T seed, final UnaryOperator\<T\> f)
+  - 迭代
+
+- public static\<T\> Stream\<T\> generate(Supplier\<T\> s)
+  - 生成
+
+### Stream的中间操作
+
+多个中间操作可以连接起来形成一个流水线，除非流水线上触发终止操作，否则中间操作不会执行任何的处理！而在终止操作时的一次性全部处理，称为“惰性求值”
+
+#### 筛选与切片
+
+|        方法         |                             描述                             |
+| :-----------------: | :----------------------------------------------------------: |
+| filter(Predicate p) |                接收Lambda，从流中排除某些元素                |
+|     distinct()      | 筛选，通过流所生成元素的hashCode（）和equals（）去除重复元素 |
+| limit(long maxSize) |                截断流，使其元素不超过给定数量                |
+|    skip(long n)     | 跳过元素，返回一个扔掉了前n个元素的流。若流中元素不足n个，则返回一个空流。与limit(n)互补 |
+
+#### 映射
+
+|               方法               |                             描述                             |
+| :------------------------------: | :----------------------------------------------------------: |
+|         map(Function f)          | 接收一个函数作为参数，该函数会被应用到每个元素上，并将其映射成一个新的元素。 |
+| map ToDouble(ToDoubleFunction f) | 接收一个函数作为参数，该函数会被应用到每个元素上，产生一个新的DoubleStream。接收一个函数作为参数，该函数会被应用到每个元素上，产生一个新的IntStream。 |
+|    map Tolnt(TolntFunction f)    | 接收一个函数作为参数，该函数会被应用到每个元素上，产生一个新的IntStream。 |
+|   map ToLong(ToLongFunction f)   | 接收一个函数作为参数，该函数会被应用到每个元素上，产生一个新的LongStream。 |
+|       flatMap(Function f)        | 接收一个函数作为参数，将流中的每个值都换成另一个流，然后把所有流连接成一个流。 |
+
+#### 排序
+
+|          方法          |                描述                |
+| :--------------------: | :--------------------------------: |
+|        sorted()        |  产生一个新流，其中按自然顺序排序  |
+| sorted(Comparator com) | 产生一个新流，其中按比较器顺序排序 |
+
+
 
 ## 五、Optional类
