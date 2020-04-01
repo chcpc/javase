@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeData {
-    private static List<Employee> getEmployees(){
+    public static List<Employee> getEmployees(){
         List<Employee> list = new ArrayList<>();
         list.add(new Employee(1001, "马化腾", 34, 6000.38));
         list.add(new Employee(1002, "马云", 12, 9876.12));
