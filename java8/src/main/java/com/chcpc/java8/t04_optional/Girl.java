@@ -1,4 +1,4 @@
-package com.chcpc.java8.t04optional;
+package com.chcpc.java8.t04_optional;
 
 public class Girl {
     private String name;

@@ -1,4 +1,4 @@
-package com.chcpc.java8.t02method_references;
+package com.chcpc.java8.t02_method_references;
 
 import java.util.ArrayList;
 import java.util.List;

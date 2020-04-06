@@ -213,6 +213,74 @@ Java8中的Arrays的静态方法stream()可以获取数据流：
 |        sorted()        |  产生一个新流，其中按自然顺序排序  |
 | sorted(Comparator com) | 产生一个新流，其中按比较器顺序排序 |
 
+### Stream的终止操作
+
+- 终端操作会从流的流水生成结果。其结果可以是任何不适流的值，例如List、Integer，甚至是void
+- 流进行了终止操作后，不能再次被使用
+
+#### 匹配与查找
+
+|          方法          |                             描述                             |
+| :--------------------: | :----------------------------------------------------------: |
+| allMatch(Predicate p)  |                     检查是否匹配所有元素                     |
+| anyMatch(Predicate p)  |                   检查是否至少匹配一个元素                   |
+| noneMatch(Predicate p) |                   检查是否没有匹配所有元素                   |
+|      findFirst()       |                        返回第一个元素                        |
+|       findAny()        |                    返回当前流中的任意元素                    |
+|        count()         |                       返回流中元素总数                       |
+|   max(Comparator c)    |                        返回流中最大值                        |
+|   min(Comparator c)    |                        返回流中最小值                        |
+|  forEach(Consumer c)   | 内部迭代（使用Collection接口需要用户去做迭代，称为外部迭代。相反，Stream API使用内部迭代实现） |
+
+#### 规约
+
+|               方法               |                           描述                            |
+| :------------------------------: | :-------------------------------------------------------: |
+| reduce(T iden, BinaryOperator b) |       可以将流中元素反复结合起来，得到一个值。返回T       |
+|     reduce(BinaryOperator b)     | 可以将流中元素反复结合起来，得到一个值。返回Optional\<T\> |
+
+> 注：map和reduce的连接通常称为map-reduce模式，因Google用它来进行网络搜索而出名。
+
+#### 收集
+
+|         方法         |                             描述                             |
+| :------------------: | :----------------------------------------------------------: |
+| collect(Collector c) | 将流转换为其他形式。接受一个Collector接口的实现，用于给Stream中元素做汇总的方法。 |
+
+Collector接口中方法的实现决定了如何对流执行收集的操作（如收集到List、Set、Map）。
+
+另外，Collectors使用类提供了很多静态方法，可以方便地创建常见收集器实例，具体方法与实例见下表：
+
+Stream API : Collectors
+
+| 方法           | 返回类型             | 作用                                    |
+| :------------- | :------------------- | :-------------------------------------- |
+| toList         | List\<T\>            | 把流中元素收集到List                    |
+| toSet          | Set\<T\>             | 把流中元素收集到Set                     |
+| toCollection   | Collection\<T\>      | 把流中元素收集到创建的集合              |
+| counting       | Long                 | 计算流中元素的个数                      |
+| summingInt     | Integer              | 对流中元素的整数属性求和                |
+| averagingInt   | Double               | 计算流中袁术Integer属性的平均值         |
+| summarizingInt | IntSummaryStatistics | 收集流中Integer属性的统计值。如：平均值 |
+
 
 
 ## 五、Optional类
+
+- 到目前为止，臭名昭著的空指针异常时导致Java应用程序失败的最常见原因。以前，为了解决空指针异常，Google公司著名的Guava项目映入了Optional类，Guava通过使用检查控制的方式来防止代码污染，它鼓励程序员写更干净的代码。收到Google Guava的启发，Optional类已经成为Java 8类库的一部分。
+- Optional\<T\>类（java.util.Optional）是一个容器类，它可以保存类型T的值，代表这个值存在。或者仅仅保存null，表示这个值不存在。原来用null表示一个值不存在，现在Optional可以更好的表达这个概念。并可以避免空指针异常。
+- Optional类的Javadoc描述如下：这是一个可以为null的容器对象。如果值存在则isPresent()方法会返回true，调用get()方法会返回该对象。
+
+Optional提供很多有用的方法，这样我们就不用显式进行空值检测。
+
+- 创建Optional类对象的方法：
+  - Optional.of(T t)：创建一个Optional实例，t必须非空
+  - Optional.empty()：创建一个空的Optional实例
+  - Optional.ofNullable(T t)：t可以为null
+- 判断Optional容器中是否包含对象
+  - boolean isPresent(Consumer<? super T> comsumer)：如果有值，就执行Comsumer接口的实现代码，并且该值会作为参数传它。
+- 获取Optional容器的对象
+  - T get()：如果调用对象包含值，返回该值，否则抛异常
+  - T orElse(T other)：如果有值则将其返回，否则返回指定的other对象。
+  - T orElseGet(Supplier<? extends T> other)：如果有值则将其返回，否则返回由Supplier接口实现提供的对象。
+  - T orElseThrow(Supplier<? extends X> exceptionSupplier)：如果有值则将其返回，否则抛出由Supplier接口实现提供的异常。
