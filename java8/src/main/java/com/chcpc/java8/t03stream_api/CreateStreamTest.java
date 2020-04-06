@@ -1,7 +1,7 @@
-package com.chcpc.java8.stream_api;
+package com.chcpc.java8.t03stream_api;
 
-import com.chcpc.java8.method_references.Employee;
-import com.chcpc.java8.method_references.EmployeeData;
+import com.chcpc.java8.t02method_references.Employee;
+import com.chcpc.java8.t02method_references.EmployeeData;
 import org.junit.Test;
 
 import java.util.Arrays;

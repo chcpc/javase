@@ -1,4 +1,4 @@
-package com.chcpc.java8.method_references;
+package com.chcpc.java8.t02method_references;
 
 import org.junit.Test;
 

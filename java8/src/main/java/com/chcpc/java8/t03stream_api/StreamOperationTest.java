@@ -1,7 +1,7 @@
-package com.chcpc.java8.stream_api;
+package com.chcpc.java8.t03stream_api;
 
-import com.chcpc.java8.method_references.Employee;
-import com.chcpc.java8.method_references.EmployeeData;
+import com.chcpc.java8.t02method_references.Employee;
+import com.chcpc.java8.t02method_references.EmployeeData;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -71,5 +71,21 @@ public class StreamOperationTest {
             list.add(c);
         }
         return list.stream();
+    }
+
+    // 排序
+    @Test
+    public void test4(){
+        // sorted()-自然排序
+        List<Integer> list = Arrays.asList(12,34,45,65,32,-54,3);
+        list.stream().sorted().forEach(System.out::println);
+        System.out.println("***************");
+        // sorted(Comparator com)—定制排序
+        // 如果自然排序会抛出异常，原因是没有实现Comparable接口
+        List<Employee> employees = EmployeeData.getEmployees();
+        employees.stream().sorted((e1,e2) -> {
+            int ageValue = Integer.compare(e1.getAge(),e2.getAge());
+            return ageValue != 0 ? ageValue : Double.compare(e1.getSalary(),e2.getSalary());
+                }).forEach(System.out::println);
     }
 }

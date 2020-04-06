@@ -1,4 +1,4 @@
-package com.chcpc.java8.lambda;
+package com.chcpc.java8.t01lambda;
 
 /**
  * 二、函数式接口
